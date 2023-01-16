@@ -31,9 +31,24 @@ def convolve(img: np.array, kernel: np.array) -> np.array:
     for i in range(tgt_size): #wiersze
         for j in range(tgt_size):  # kolumny
             mat = img[i:i+k, j:j+k]
-            convolved_img[i, j] = np.sum(np.multiply(mat, kernel))
-            
+            convolved_img[i, j]=multiply_add(mat, kernel)
     return convolved_img
+
+
+def multiply_add(A,B):
+    if  A.shape[1] == B.shape[0]:
+        sum =0
+        
+        rows = A.shape[0]
+        cols = B.shape[1]
+        for row in range(rows): 
+            for col in range(cols):
+                sum += A[row, col] * B[row, col]
+        
+        return sum
+    else:
+        pass
+    
 
 
 def rgb_convolve(im1: np.array, kernel: np.array):
@@ -94,7 +109,6 @@ def img_pyramids():
     apple = cv2.resize(apple,(512,512))
     orange = cv2.resize(orange,(512,512))
 
-    #apple_orange = np.hstack((apple[:, :256], orange[:, 256:])) 
     cv2.imshow('jablko',apple)
     cv2.imshow('pomarancza',orange)
 
@@ -141,18 +155,11 @@ def img_pyramids():
         orange_laplace = rgb_convolve(im1=np.array(orange_add),kernel = blur_laplace)
         orange = orange_laplace
 
-
-
     cv2.imshow('laplacowa pomaranczka', orange)
     filename = 'pomaranczka.jpg'
-    #cv2.imwrite(filename, orange)
-
-
-
 
     # pomaranczka zmniejszamy jej wymiary o 100 po czym dodajemy u gory i na dole kolumny w kolorze tla o 50
     blur_size = orange.shape[0]
-
 
     #jabukowapomaranczka
     apple_orange = np.hstack((apple[:,:blur_size//2],orange[:,blur_size//2:]))
